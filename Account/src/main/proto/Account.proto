@@ -11,10 +11,10 @@ service Account{
     rpc getAccountBalance(AccountRequest) returns (AccountResponse);
 
     // UNARY - RPC -> update stock price
-    rpc updateStockPrice(UpdateAccountRequest) returns (UpdateAccountResponse);
+    rpc updateAccountBalance(UpdateAccountRequest) returns (UpdateAccountResponse);
 
     // UNARY - RPC -> create a new stock
-    rpc createStock(CreateAccountRequest) returns (CreateAccountResponse);
+    rpc createAccount(CreateAccountRequest) returns (CreateAccountResponse);
 
 }
 
