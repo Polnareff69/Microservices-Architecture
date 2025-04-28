@@ -34,3 +34,4 @@ build/
 i-BastionHost-ExchangeSystem.pem
 .pem
 *.pem
+application.properties
