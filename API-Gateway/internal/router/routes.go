@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/JeroZp/gRPC-MOM/API-Gateway/internal/user_service"
 	"github.com/JeroZp/gRPC-MOM/API-Gateway/internal/stock_trading_server"
-	"github.com/JeroZp/gRPC-MOM/API-Gateway/internal/transactions_service"
 	"github.com/JeroZp/gRPC-MOM/API-Gateway/internal/account_service"
+  "github.com/JeroZp/gRPC-MOM/API-Gateway/internal/transaction_service"
 )
 
 func SetupRoutes(r *gin.Engine) {
@@ -20,11 +20,12 @@ func SetupRoutes(r *gin.Engine) {
 	r.POST   ("/stock",         stock_trading_server.CreateStock)
 	r.PUT    ("/stock",         stock_trading_server.UpdateStockPrice)
 
-	// Rutas de transacciones
-	r.POST   ("/transaction", transactions_service.CreateTransaction)
-
 	// Rutas de cuentas
 	r.GET    ("/account/:id", account_service.GetAccountBalance)
 	r.POST   ("/account",     account_service.CreateAccount)
 	r.PUT    ("/account",     account_service.UpdateAccountBalance)
+
+  // Rutas de transacciones
+  r.POST("/transaction", transaction_service.CreateTransaction)
+
 }

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.30.2
-// source: invoicer.proto
+// source: Transaction.proto
 
 package proto
 
@@ -31,7 +31,7 @@ type Amount struct {
 
 func (x *Amount) Reset() {
 	*x = Amount{}
-	mi := &file_invoicer_proto_msgTypes[0]
+	mi := &file_Transaction_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +43,7 @@ func (x *Amount) String() string {
 func (*Amount) ProtoMessage() {}
 
 func (x *Amount) ProtoReflect() protoreflect.Message {
-	mi := &file_invoicer_proto_msgTypes[0]
+	mi := &file_Transaction_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +56,7 @@ func (x *Amount) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Amount.ProtoReflect.Descriptor instead.
 func (*Amount) Descriptor() ([]byte, []int) {
-	return file_invoicer_proto_rawDescGZIP(), []int{0}
+	return file_Transaction_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Amount) GetAmount() int64 {
@@ -84,7 +84,7 @@ type Transaction struct {
 
 func (x *Transaction) Reset() {
 	*x = Transaction{}
-	mi := &file_invoicer_proto_msgTypes[1]
+	mi := &file_Transaction_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -96,7 +96,7 @@ func (x *Transaction) String() string {
 func (*Transaction) ProtoMessage() {}
 
 func (x *Transaction) ProtoReflect() protoreflect.Message {
-	mi := &file_invoicer_proto_msgTypes[1]
+	mi := &file_Transaction_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -109,7 +109,7 @@ func (x *Transaction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Transaction.ProtoReflect.Descriptor instead.
 func (*Transaction) Descriptor() ([]byte, []int) {
-	return file_invoicer_proto_rawDescGZIP(), []int{1}
+	return file_Transaction_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Transaction) GetFrom() string {
@@ -144,7 +144,7 @@ type CreateRequest struct {
 
 func (x *CreateRequest) Reset() {
 	*x = CreateRequest{}
-	mi := &file_invoicer_proto_msgTypes[2]
+	mi := &file_Transaction_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -156,7 +156,7 @@ func (x *CreateRequest) String() string {
 func (*CreateRequest) ProtoMessage() {}
 
 func (x *CreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_invoicer_proto_msgTypes[2]
+	mi := &file_Transaction_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -169,7 +169,7 @@ func (x *CreateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRequest.ProtoReflect.Descriptor instead.
 func (*CreateRequest) Descriptor() ([]byte, []int) {
-	return file_invoicer_proto_rawDescGZIP(), []int{2}
+	return file_Transaction_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateRequest) GetAmount() *Amount {
@@ -204,7 +204,7 @@ type CreateResponse struct {
 
 func (x *CreateResponse) Reset() {
 	*x = CreateResponse{}
-	mi := &file_invoicer_proto_msgTypes[3]
+	mi := &file_Transaction_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -216,7 +216,7 @@ func (x *CreateResponse) String() string {
 func (*CreateResponse) ProtoMessage() {}
 
 func (x *CreateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_invoicer_proto_msgTypes[3]
+	mi := &file_Transaction_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -229,7 +229,7 @@ func (x *CreateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateResponse.ProtoReflect.Descriptor instead.
 func (*CreateResponse) Descriptor() ([]byte, []int) {
-	return file_invoicer_proto_rawDescGZIP(), []int{3}
+	return file_Transaction_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateResponse) GetSuccess() bool {
@@ -253,11 +253,11 @@ func (x *CreateResponse) GetTransaction() *Transaction {
 	return nil
 }
 
-var File_invoicer_proto protoreflect.FileDescriptor
+var File_Transaction_proto protoreflect.FileDescriptor
 
-const file_invoicer_proto_rawDesc = "" +
+const file_Transaction_proto_rawDesc = "" +
 	"\n" +
-	"\x0einvoicer.proto\"<\n" +
+	"\x11Transaction.proto\"<\n" +
 	"\x06Amount\x12\x16\n" +
 	"\x06amount\x18\x01 \x01(\x03R\x06amount\x12\x1a\n" +
 	"\bcurrency\x18\x02 \x01(\tR\bcurrency\"R\n" +
@@ -272,35 +272,35 @@ const file_invoicer_proto_rawDesc = "" +
 	"\x0eCreateResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12.\n" +
-	"\vtransaction\x18\x03 \x01(\v2\f.TransactionR\vtransaction25\n" +
-	"\bInvoicer\x12)\n" +
-	"\x06Create\x12\x0e.CreateRequest\x1a\x0f.CreateResponseBRZPgithub.com/JeroZp/gRPC-MOM/API-Gateway/internal/transactions_service/proto;protob\x06proto3"
+	"\vtransaction\x18\x03 \x01(\v2\f.TransactionR\vtransaction2?\n" +
+	"\x12TransactionService\x12)\n" +
+	"\x06Create\x12\x0e.CreateRequest\x1a\x0f.CreateResponseBQZOgithub.com/JeroZp/gRPC-MOM/API-Gateway/internal/transaction_service/proto;protob\x06proto3"
 
 var (
-	file_invoicer_proto_rawDescOnce sync.Once
-	file_invoicer_proto_rawDescData []byte
+	file_Transaction_proto_rawDescOnce sync.Once
+	file_Transaction_proto_rawDescData []byte
 )
 
-func file_invoicer_proto_rawDescGZIP() []byte {
-	file_invoicer_proto_rawDescOnce.Do(func() {
-		file_invoicer_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_invoicer_proto_rawDesc), len(file_invoicer_proto_rawDesc)))
+func file_Transaction_proto_rawDescGZIP() []byte {
+	file_Transaction_proto_rawDescOnce.Do(func() {
+		file_Transaction_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_Transaction_proto_rawDesc), len(file_Transaction_proto_rawDesc)))
 	})
-	return file_invoicer_proto_rawDescData
+	return file_Transaction_proto_rawDescData
 }
 
-var file_invoicer_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_invoicer_proto_goTypes = []any{
+var file_Transaction_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_Transaction_proto_goTypes = []any{
 	(*Amount)(nil),         // 0: Amount
 	(*Transaction)(nil),    // 1: Transaction
 	(*CreateRequest)(nil),  // 2: CreateRequest
 	(*CreateResponse)(nil), // 3: CreateResponse
 }
-var file_invoicer_proto_depIdxs = []int32{
+var file_Transaction_proto_depIdxs = []int32{
 	0, // 0: Transaction.amount:type_name -> Amount
 	0, // 1: CreateRequest.amount:type_name -> Amount
 	1, // 2: CreateResponse.transaction:type_name -> Transaction
-	2, // 3: Invoicer.Create:input_type -> CreateRequest
-	3, // 4: Invoicer.Create:output_type -> CreateResponse
+	2, // 3: TransactionService.Create:input_type -> CreateRequest
+	3, // 4: TransactionService.Create:output_type -> CreateResponse
 	4, // [4:5] is the sub-list for method output_type
 	3, // [3:4] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name
@@ -308,26 +308,26 @@ var file_invoicer_proto_depIdxs = []int32{
 	0, // [0:3] is the sub-list for field type_name
 }
 
-func init() { file_invoicer_proto_init() }
-func file_invoicer_proto_init() {
-	if File_invoicer_proto != nil {
+func init() { file_Transaction_proto_init() }
+func file_Transaction_proto_init() {
+	if File_Transaction_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_invoicer_proto_rawDesc), len(file_invoicer_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Transaction_proto_rawDesc), len(file_Transaction_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_invoicer_proto_goTypes,
-		DependencyIndexes: file_invoicer_proto_depIdxs,
-		MessageInfos:      file_invoicer_proto_msgTypes,
+		GoTypes:           file_Transaction_proto_goTypes,
+		DependencyIndexes: file_Transaction_proto_depIdxs,
+		MessageInfos:      file_Transaction_proto_msgTypes,
 	}.Build()
-	File_invoicer_proto = out.File
-	file_invoicer_proto_goTypes = nil
-	file_invoicer_proto_depIdxs = nil
+	File_Transaction_proto = out.File
+	file_Transaction_proto_goTypes = nil
+	file_Transaction_proto_depIdxs = nil
 }
