@@ -8,7 +8,7 @@ import (
 
 	"Transaction/internal/config"
 	"Transaction/internal/service"
-	"Transaction/protobuf/transaction"
+	transaction "Transaction/protobuf/transaction"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 	transactionService := service.NewTransactionService(db)
-	invoicer.RegistertransactionServer(grpcServer, transactionService)
+	transaction.RegisterTransactionServiceServer(grpcServer, transactionService)
 
 	log.Println("Servidor escuchando en puerto 9000...")
 	if err := grpcServer.Serve(lis); err != nil {

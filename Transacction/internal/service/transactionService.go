@@ -7,8 +7,8 @@ import (
 	"log"
 	"time"
 
-	"Transaction/protobuf"
-	"Transaction/protobuf/stockpb"
+	protobuf "Transaction/protobuf/transaction"
+	accountpb "Transaction/protobuf/account/protobuf"
 
 	"google.golang.org/grpc"
 )
@@ -23,48 +23,49 @@ func NewTransactionService(db *sql.DB) *TransactionService {
 }
 
 func (s *TransactionService) Create(ctx context.Context, req *protobuf.CreateRequest) (*protobuf.CreateResponse, error) {
-	// 1. Llamar al microservicio de stock para obtener el balance
+	// 1. Conectar al microservicio de Account
 	conn, err := grpc.Dial("localhost:9090", grpc.WithInsecure())
 	if err != nil {
-		log.Printf("❌ No se pudo conectar al microservicio de stock: %v", err)
+		log.Printf("❌ No se pudo conectar al microservicio de Account: %v", err)
 		return &protobuf.CreateResponse{
 			Success: false,
-			Message: "Error al conectar con el microservicio de stock",
+			Message: "Error al conectar con el microservicio de Account",
 		}, nil
 	}
 	defer conn.Close()
 
-	client := stockpb.NewStockTradingServiceClient(conn)
+	client := accountpb.NewAccountClient(conn)
 
-	stockReq := &stockpb.StockRequest{
-		StockSymbol: req.From,
+	// 2. Obtener balance del remitente (From)
+	accReq := &accountpb.AccountRequest{
+		IdAccount: req.From,
 	}
 
-	stockCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	accCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stockRes, err := client.GetStockPrice(stockCtx, stockReq)
+	accRes, err := client.GetAccountBalance(accCtx, accReq)
 	if err != nil {
-		log.Printf("❌ Error al obtener precio del stock: %v", err)
+		log.Printf("❌ Error al obtener balance del emisor: %v", err)
 		return &protobuf.CreateResponse{
 			Success: false,
-			Message: "Error al obtener información del stock",
+			Message: "Error al obtener información del emisor",
 		}, nil
 	}
 
-	log.Printf("📈 Precio de %s: %.2f (timestamp: %s)", stockRes.StockSymbol, stockRes.Price, stockRes.Timestamp)
+	log.Printf("📘 Balance del emisor %s: %d créditos", accRes.IdAccount, accRes.Credits)
 
-	if stockRes.Price < float64(req.Amount.Amount) || req.Amount.Amount == 0 {
-		log.Printf("❌ Saldo insuficiente: %.2f < %d", stockRes.Price, req.Amount.Amount)
+	if accRes.Credits < req.Amount.Amount || req.Amount.Amount <= 0 {
+		log.Printf("❌ Créditos insuficientes o cantidad inválida")
 		return &protobuf.CreateResponse{
 			Success: false,
-			Message: "Saldo insuficiente",
+			Message: "Créditos insuficientes o cantidad inválida",
 		}, nil
 	}
 
-	// 2. Insertar en la base de datos
+	// 3. Guardar transacción en la base de datos
 	_, err = s.db.Exec(`
-		INSERT INTO transactions (from_user, to_user, amount, currency)
+		INSERT INTO transactions (from_acc, to_acc, amount, currency)
 		VALUES ($1, $2, $3, $4)
 	`, req.From, req.To, req.Amount.Amount, req.Amount.Currency)
 
@@ -76,54 +77,58 @@ func (s *TransactionService) Create(ctx context.Context, req *protobuf.CreateReq
 		}, nil
 	}
 
-	// 3. Descontar valor al origen (From)
-	newPrice := stockRes.Price - float64(req.Amount.Amount)
-	updateReq := &stockpb.UpdateStockRequest{
-		StockSymbol: req.From,
-		NewPrice:    newPrice,
+	// 4. Descontar créditos al emisor
+	newCreditsFrom := accRes.Credits - req.Amount.Amount
+	updateReq := &accountpb.UpdateAccountRequest{
+		IdAccount: req.From,
+		Credits:   newCreditsFrom,
 	}
-	updateRes, err := client.UpdateStockPrice(ctx, updateReq)
+
+	updateRes, err := client.UpdateAccountBalance(ctx, updateReq)
 	if err != nil || !updateRes.Success {
-		log.Printf("❌ Error al actualizar el precio del stock origen: %v", err)
+		log.Printf("❌ Error al actualizar créditos del emisor: %v", err)
 		return &protobuf.CreateResponse{
 			Success: false,
-			Message: "Transacción guardada pero error al actualizar saldo del emisor",
+			Message: "Transacción guardada pero error al debitar al emisor",
 		}, nil
 	}
 
-	log.Printf("✅ Precio actualizado del emisor: %s", updateRes.Message)
+	log.Printf("✅ Créditos actualizados del emisor: %s", updateRes.Message)
 
-	// 4. Sumar valor al receptor (To)
-	stockToReq := &stockpb.StockRequest{StockSymbol: req.To}
-	stockToRes, err := client.GetStockPrice(ctx, stockToReq)
+	// 5. Obtener balance actual del receptor (To)
+	toAccRes, err := client.GetAccountBalance(ctx, &accountpb.AccountRequest{
+		IdAccount: req.To,
+	})
 	if err != nil {
-		log.Printf("❌ Error al obtener precio del stock destino: %v", err)
+		log.Printf("❌ Error al obtener balance del receptor: %v", err)
 		return &protobuf.CreateResponse{
 			Success: false,
 			Message: "Error al obtener información del receptor",
 		}, nil
 	}
 
-	newToPrice := stockToRes.Price + float64(req.Amount.Amount)
-	updateToReq := &stockpb.UpdateStockRequest{
-		StockSymbol: req.To,
-		NewPrice:    newToPrice,
+	// 6. Acreditar al receptor
+	newCreditsTo := toAccRes.Credits + req.Amount.Amount
+	updateToReq := &accountpb.UpdateAccountRequest{
+		IdAccount: req.To,
+		Credits:   newCreditsTo,
 	}
-	updateToRes, err := client.UpdateStockPrice(ctx, updateToReq)
+
+	updateToRes, err := client.UpdateAccountBalance(ctx, updateToReq)
 	if err != nil || !updateToRes.Success {
-		log.Printf("❌ Error al actualizar saldo del receptor: %v", err)
+		log.Printf("❌ Error al acreditar al receptor: %v", err)
 		return &protobuf.CreateResponse{
 			Success: false,
-			Message: "Transacción guardada pero error al acreditar saldo al receptor",
+			Message: "Transacción guardada pero error al acreditar al receptor",
 		}, nil
 	}
 
-	log.Printf("✅ Saldo del receptor actualizado: %s", updateToRes.Message)
+	log.Printf("✅ Créditos del receptor actualizados: %s", updateToRes.Message)
 
-	// 5. Devolver respuesta final
+	// 7. Respuesta exitosa
 	return &protobuf.CreateResponse{
 		Success: true,
-		Message: fmt.Sprintf("Transacción realizada correctamente. Saldo restante: %.2f", newPrice),
+		Message: fmt.Sprintf("Transacción realizada exitosamente. Créditos restantes: %d", newCreditsFrom),
 		Transaction: &protobuf.Transaction{
 			From: req.From,
 			To:   req.To,
