@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package Account;
+option java_multiple_files = true;
+option java_package = "com.account.grpc";
+option java_outer_classname = "ExchangeSystem";
+option go_package = "github.com/JeroZp/gRPC-MOM/API-Gateway/internal/account_service/proto;proto";
+
+
+service Account{
+    // UNARY - RPC -> get current stock price
+    rpc getAccountBalance(AccountRequest) returns (AccountResponse);
+
+    // UNARY - RPC -> update stock price
+    rpc updateAccountBalance(UpdateAccountRequest) returns (UpdateAccountResponse);
+
+    // UNARY - RPC -> create a new stock
+    rpc createAccount(CreateAccountRequest) returns (CreateAccountResponse);
+
+}
+
+message AccountRequest {
+    string IdAccount = 1;
+}
+
+message AccountResponse {
+    string IdAccount = 1;
+    int64 credits = 2;
+    string creationDate = 3;
+}
+
+message UpdateAccountRequest {
+    string IdAccount = 1;
+    int64 credits = 2;
+}
+
+message UpdateAccountResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message CreateAccountRequest {
+    string IdAccount = 1;
+    double credits = 2;
+}
+
+message CreateAccountResponse {
+    bool success = 1;
+    string message = 2;
+}
